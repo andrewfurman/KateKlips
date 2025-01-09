@@ -16,12 +16,7 @@ export default async function handler(
 
   try {
     const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        {
-          role: "user",
-          content: req.body.message,
-        },
-      ],
+      messages: req.body.messages,
       model: "llama-3.3-70b-versatile",
     });
 

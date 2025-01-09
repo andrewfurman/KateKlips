@@ -9,6 +9,7 @@ const Home: NextPage = () => {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,6 +19,7 @@ const Home: NextPage = () => {
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
+    setError(null);
 
     try {
       const response = await fetch('/api/chat', {
@@ -29,9 +31,15 @@ const Home: NextPage = () => {
       });
       
       const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong');
+      }
+      
       setMessages(prev => [...prev, { role: "assistant", content: data.content }]);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
+      setError(error.message);
     } finally {
       setIsLoading(false);
     }
@@ -55,6 +63,7 @@ const Home: NextPage = () => {
             </div>
           ))}
           {isLoading && <div className={styles.loading}>Loading...</div>}
+          {error && <div className={styles.error}>{error}</div>}
         </div>
 
         <form onSubmit={handleSubmit} className={styles.inputForm}>

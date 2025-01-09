@@ -138,7 +138,17 @@
 
 .loading {
   text-align: center;
+  padding: 1rem;
   color: #666;
+}
+
+.error {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+  border: 1px solid #ef9a9a;
 }
 
 .inputForm {

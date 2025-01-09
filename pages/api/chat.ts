@@ -22,8 +22,10 @@ export default async function handler(
 
     const content = chatCompletion.choices[0]?.message?.content || "";
     res.status(200).json({ content });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error:', error);
-    res.status(500).json({ message: 'Error processing your request' });
+    const status = error.status || 500;
+    const message = error.response?.data?.error?.message || error.message || 'Error processing your request';
+    res.status(status).json({ error: message });
   }
 }

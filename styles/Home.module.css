@@ -170,6 +170,33 @@
   cursor: not-allowed;
 }
 
+.message :global(p) {
+  margin: 0.5em 0;
+}
+
+.message :global(code) {
+  background-color: #f0f0f0;
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  font-family: monospace;
+}
+
+.message :global(pre) {
+  background-color: #f0f0f0;
+  padding: 1em;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.message :global(ul), .message :global(ol) {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.message :global(h1), .message :global(h2), .message :global(h3) {
+  margin: 0.5em 0;
+}
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;

@@ -2,6 +2,7 @@
 import type { NextPage } from "next";
 import { useState } from "react";
 import Head from "next/head";
+import ReactMarkdown from "react-markdown";
 import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
@@ -48,7 +49,7 @@ const Home: NextPage = () => {
         <div className={styles.chatContainer}>
           {messages.map((msg, index) => (
             <div key={index} className={`${styles.message} ${styles[msg.role]}`}>
-              {msg.content}
+              <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           ))}
           {isLoading && <div className={styles.loading}>Loading...</div>}

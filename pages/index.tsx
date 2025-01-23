@@ -10,6 +10,15 @@ const Home: NextPage = () => {
   const [messages, setMessages] = useState<Array<{ role: string; content: string }>>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  React.useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,6 +118,7 @@ const Home: NextPage = () => {
           ))}
           {isLoading && <div className={styles.loading}>Loading...</div>}
           {error && <div className={styles.error}>{error}</div>}
+          <div ref={messagesEndRef} />
         </div>
 
         <form onSubmit={handleSubmit} className={styles.inputForm}>

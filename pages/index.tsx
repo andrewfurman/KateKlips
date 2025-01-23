@@ -3,7 +3,6 @@ import type { NextPage } from "next";
 import React, { useState } from "react";
 import Head from "next/head";
 import ReactMarkdown from "react-markdown";
-import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   const [input, setInput] = useState("");
@@ -57,8 +56,6 @@ const Home: NextPage = () => {
 
           buffer += decoder.decode(value, { stream: true });
           const lines = buffer.split('\n');
-          
-          // Keep the last partial line in the buffer
           buffer = lines.pop() || '';
 
           for (const line of lines) {
@@ -77,19 +74,6 @@ const Home: NextPage = () => {
             }
           }
         }
-        
-        // Process any remaining data in the buffer
-        if (buffer.trim().startsWith('data: ')) {
-          try {
-            const data = JSON.parse(buffer.trim().slice(5));
-            if (data.content) {
-              currentMessage.content += data.content;
-              setMessages(prev => [...prev.slice(0, -1), { ...currentMessage }]);
-            }
-          } catch (e) {
-            console.error('Error parsing SSE:', e);
-          }
-        }
       }
     } catch (error: any) {
       console.error('Error:', error);
@@ -100,36 +84,51 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className={styles.container}>
+    <div className="min-h-screen p-8">
       <Head>
         <title>💁‍♀️ Kate Klips 📋</title>
         <meta name="description" content="💁‍♀️ Kate Klips 📋" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>💁‍♀️ Kate Klips 📋</h1>
+      <main className="flex flex-col items-center w-full">
+        <h1 className="text-3xl font-bold mb-4">💁‍♀️ Kate Klips 📋</h1>
         
-        <div className={styles.chatContainer}>
+        <div className="w-full max-w-3xl h-[75vh] overflow-y-auto border border-gray-200 rounded-lg p-4 mb-4">
           {messages.map((msg, index) => (
-            <div key={index} className={`${styles.message} ${styles[msg.role]}`}>
+            <div
+              key={index}
+              className={`my-2 p-4 rounded-lg max-w-[80%] ${
+                msg.role === "user"
+                  ? "ml-auto bg-blue-100"
+                  : "mr-auto bg-gray-100"
+              }`}
+            >
               <ReactMarkdown>{msg.content}</ReactMarkdown>
             </div>
           ))}
-          {isLoading && <div className={styles.loading}>Loading...</div>}
-          {error && <div className={styles.error}>{error}</div>}
+          {isLoading && <div className="text-center p-4 text-gray-500">Loading...</div>}
+          {error && (
+            <div className="bg-red-50 text-red-700 p-4 my-4 rounded-lg border border-red-200">
+              {error}
+            </div>
+          )}
           <div ref={messagesEndRef} />
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.inputForm}>
+        <form onSubmit={handleSubmit} className="w-full max-w-3xl flex gap-4">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
-            className={styles.input}
+            className="flex-1 p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <button type="submit" className={styles.button} disabled={isLoading}>
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-400 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
+          >
             Send
           </button>
         </form>

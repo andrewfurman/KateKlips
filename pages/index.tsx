@@ -29,14 +29,39 @@ const Home: NextPage = () => {
           messages: [...messages, { role: "user", content: input }]
         }),
       });
-      
-      const data = await response.json();
-      
+
       if (!response.ok) {
-        throw new Error(data.error || 'Something went wrong');
+        throw new Error('Something went wrong');
       }
-      
-      setMessages(prev => [...prev, { role: "assistant", content: data.content }]);
+
+      const reader = response.body?.getReader();
+      let currentMessage = { role: "assistant", content: "" };
+      setMessages(prev => [...prev, currentMessage]);
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const text = new TextDecoder().decode(value);
+          const lines = text.split('\n').filter(line => line.trim() !== '');
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              try {
+                const data = JSON.parse(line.slice(6));
+                if (data.error) throw new Error(data.error);
+                if (data.content) {
+                  currentMessage.content += data.content;
+                  setMessages(prev => [...prev.slice(0, -1), { ...currentMessage }]);
+                }
+              } catch (e) {
+                console.error('Error parsing SSE:', e);
+              }
+            }
+          }
+        }
+      }
     } catch (error: any) {
       console.error('Error:', error);
       setError(error.message);

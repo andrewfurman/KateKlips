@@ -3,7 +3,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
+  apiKey: process.env.OPENAI_API_KEY,
+  baseURL: 'https://api.deepseek.com/v1'
 });
 
 export default async function handler(
@@ -23,7 +24,7 @@ export default async function handler(
   try {
     const stream = await openai.chat.completions.create({
       messages: req.body.messages,
-      model: "gpt-3.5-turbo",
+      model: "deepseek-chat",
       stream: true,
     });
 

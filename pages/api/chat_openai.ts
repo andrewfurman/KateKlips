@@ -18,26 +18,29 @@ export default async function handler(
   res.setHeader('Content-Type', 'text/event-stream');
   res.setHeader('Cache-Control', 'no-cache');
   res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Access-Control-Allow-Origin', '*');
 
   try {
     const stream = await openai.chat.completions.create({
       messages: req.body.messages,
-      model: "gpt-4o-mini",
+      model: "gpt-3.5-turbo",
       stream: true,
     });
 
     for await (const chunk of stream) {
       const content = chunk.choices[0]?.delta?.content || '';
       if (content) {
+        // Ensure proper SSE format
         res.write(`data: ${JSON.stringify({ content })}\n\n`);
+        // Flush the response to ensure immediate sending
+        res.flush?.();
       }
     }
 
     res.end();
   } catch (error: any) {
     console.error('Error:', error);
-    const status = error.status || 500;
-    const message = error.response?.data?.error?.message || error.message || 'Error processing your request';
+    const message = error.message || 'Error processing your request';
     res.write(`data: ${JSON.stringify({ error: message })}\n\n`);
     res.end();
   }

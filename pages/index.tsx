@@ -38,18 +38,25 @@ const Home: NextPage = () => {
       let currentMessage = { role: "assistant", content: "" };
       setMessages(prev => [...prev, currentMessage]);
 
+      const decoder = new TextDecoder();
+      let buffer = '';
+      
       if (reader) {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
 
-          const text = new TextDecoder().decode(value);
-          const lines = text.split('\n').filter(line => line.trim() !== '');
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          
+          // Keep the last partial line in the buffer
+          buffer = lines.pop() || '';
 
           for (const line of lines) {
-            if (line.startsWith('data: ')) {
+            const trimmedLine = line.trim();
+            if (trimmedLine.startsWith('data: ')) {
               try {
-                const data = JSON.parse(line.slice(6));
+                const data = JSON.parse(trimmedLine.slice(5));
                 if (data.error) throw new Error(data.error);
                 if (data.content) {
                   currentMessage.content += data.content;
@@ -59,6 +66,19 @@ const Home: NextPage = () => {
                 console.error('Error parsing SSE:', e);
               }
             }
+          }
+        }
+        
+        // Process any remaining data in the buffer
+        if (buffer.trim().startsWith('data: ')) {
+          try {
+            const data = JSON.parse(buffer.trim().slice(5));
+            if (data.content) {
+              currentMessage.content += data.content;
+              setMessages(prev => [...prev.slice(0, -1), { ...currentMessage }]);
+            }
+          } catch (e) {
+            console.error('Error parsing SSE:', e);
           }
         }
       }

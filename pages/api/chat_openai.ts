@@ -22,7 +22,7 @@ export default async function handler(
   try {
     const stream = await openai.chat.completions.create({
       messages: req.body.messages,
-      model: "gpt-4",
+      model: "gpt-4o-mini",
       stream: true,
     });
 

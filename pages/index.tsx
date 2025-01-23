@@ -93,13 +93,13 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>ChatGPT Interface</title>
-        <meta name="description" content="Chat with GPT-3.5" />
+        <title>💁‍♀️ Kate Klips 📋</title>
+        <meta name="description" content="💁‍♀️ Kate Klips 📋" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Chat with GPT-3.5</h1>
+        <h1 className={styles.title}>💁‍♀️ Kate Klips 📋</h1>
         
         <div className={styles.chatContainer}>
           {messages.map((msg, index) => (

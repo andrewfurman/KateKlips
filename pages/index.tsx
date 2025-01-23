@@ -22,7 +22,7 @@ const Home: NextPage = () => {
     setError(null);
 
     try {
-      const response = await fetch('/api/chat', {
+      const response = await fetch('/api/chat_openai', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
@@ -48,13 +48,13 @@ const Home: NextPage = () => {
   return (
     <div className={styles.container}>
       <Head>
-        <title>Groq Chat Interface</title>
-        <meta name="description" content="Chat with LLaMA using Groq" />
+        <title>ChatGPT Interface</title>
+        <meta name="description" content="Chat with GPT-3.5" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>Chat with LLaMA</h1>
+        <h1 className={styles.title}>Chat with GPT-3.5</h1>
         
         <div className={styles.chatContainer}>
           {messages.map((msg, index) => (
